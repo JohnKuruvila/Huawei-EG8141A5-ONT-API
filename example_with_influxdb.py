@@ -1,7 +1,4 @@
 import time
-from datetime import datetime
-
-import requests
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
@@ -9,7 +6,7 @@ from huawei_eg8141a5_api import EG8141A5
 
 router = EG8141A5("192.168.18.1")
 
-router.login("Epuser", "epuserpassword")
+router.login("Epuser", "userEp")
 optic_info = router.get_optic_info()
 wan_info = router.get_wan_info()
 eth_info = router.get_eth_info()

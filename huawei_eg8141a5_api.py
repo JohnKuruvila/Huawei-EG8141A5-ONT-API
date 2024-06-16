@@ -83,7 +83,7 @@ class EG8141A5(object):
             self.is_admin = False
 
         # First we need to get a token which is (as far as I know) randomly generated
-        token = requests.post(self.url + "asp/GetRandCount.asp").text[3:]
+        token = requests.post(self.url + "asp/GetRandCount.asp", verify=False).text[3:]
 
         # Encoding the password to base64
         password_bytes = password.encode("ascii")
@@ -100,7 +100,9 @@ class EG8141A5(object):
         # Hard coded cookies
         cookies = {"Cookie": "body:Language:english:id=-1"}
 
-        login_result = requests.post(self.url + "login.cgi", data=data, cookies=cookies)
+        login_result = requests.post(
+            self.url + "login.cgi", data=data, cookies=cookies, verify=False
+        )
 
         if "var pageName = 'index.asp'" in login_result.text:
             self.is_logged_in = True
@@ -116,7 +118,9 @@ class EG8141A5(object):
     def get_device_info(self):
 
         device_info = requests.get(
-            self.url + "html/ssmp/deviceinfo/deviceinfo.asp", cookies=self.cookies
+            self.url + "html/ssmp/deviceinfo/deviceinfo.asp",
+            cookies=self.cookies,
+            verify=False,
         ).text
 
         cpuUsed = device_info.split("var cpuUsed = '")[1].split("%'")[0]
@@ -141,7 +145,9 @@ class EG8141A5(object):
     def get_wan_info(self):
 
         wan_list = requests.get(
-            self.url + "html/bbsp/common/wan_list.asp", cookies=self.cookies
+            self.url + "html/bbsp/common/wan_list.asp",
+            cookies=self.cookies,
+            verify=False,
         ).text
 
         wan_info_stats = get_elements_from_javascript_array(wan_list, "WaninfoStats", 1)
@@ -173,7 +179,9 @@ class EG8141A5(object):
     def get_eth_info(self):
 
         eth_info = requests.get(
-            self.url + "html/amp/ethinfo/ethinfo.asp", cookies=self.cookies
+            self.url + "html/amp/ethinfo/ethinfo.asp",
+            cookies=self.cookies,
+            verify=False,
         ).text
 
         lan_stats_dict = {}
@@ -193,7 +201,9 @@ class EG8141A5(object):
     def get_optic_info(self):
 
         optic_info = requests.get(
-            self.url + "html/amp/opticinfo/opticinfo.asp", cookies=self.cookies
+            self.url + "html/amp/opticinfo/opticinfo.asp",
+            cookies=self.cookies,
+            verify=False,
         ).text
 
         optic_values = get_elements_from_javascript_array(optic_info, "stOpticInfo", 3)
@@ -218,7 +228,9 @@ class EG8141A5(object):
     def get_debug_log(self):
 
         debug_log_view = requests.get(
-            self.url + "html/ssmp/debuglog/debuglogview.asp", cookies=self.cookies
+            self.url + "html/ssmp/debuglog/debuglogview.asp",
+            cookies=self.cookies,
+            verify=False,
         ).text
 
         ont_token = debug_log_view.split('name="onttoken" id="onttoken" value="')[
@@ -232,6 +244,7 @@ class EG8141A5(object):
             + "html/ssmp/debuglog/debuglogdown.cgi?FileType=debuglog&RequestFile=html/ssmp/debuglog/debuglogview.asp",
             data=data,
             cookies=self.cookies,
+            verify=False,
         ).text
 
         return debug_log
@@ -243,5 +256,6 @@ class EG8141A5(object):
             self.url + "logout.cgi?RequestFile=html/logout.html",
             data=data,
             cookies=self.cookies,
+            verify=False,
         )
-        requests.get(self.url + "html/logout.html", cookies=self.cookies)
+        requests.get(self.url + "html/logout.html", cookies=self.cookies, verify=False)
